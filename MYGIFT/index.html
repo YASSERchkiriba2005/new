@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Choices</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+        .container {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+        .container.active {
+            opacity: 1;
+        }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+        .button-container {
+            position: absolute;
+            bottom: 2%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        /* تصميم الزر الجديد */
+        button {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(38, 0, 96, 0.6);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* تأثير عند المرور على الزر */
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -75%;
+            width: 50%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: skewX(-25deg);
+            transition: left 0.7s ease-in-out;
+        }
+
+        button:hover::before {
+            left: 130%;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(38, 0, 96, 0.8);
+        }
+
+        /* تأثير القلوب */
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            transform: rotate(45deg);
+            animation: floatUp 2s ease-out forwards;
+        }
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            border-radius: 50%;
+        }
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+        .heart::after {
+            left: -10px;
+            top: 0;
+        }
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-150px) scale(1.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        const images = [
+            'images/image1.jpg',
+            'images/image2.jpg',
+            'images/image3.jpg',
+            'images/image4.jpg',
+            'images/image5.jpg',
+            'images/image6.jpg',
+            'images/image7.jpg',
+            'images/image8.jpg'
+        ];
+
+        let currentIndex = 0;
+
+        function loadImage(index) {
+            const app = document.getElementById('app');
+            const isLastImage = index === images.length - 1;
+
+            const container = document.createElement('div');
+            container.className = 'container';
+            setTimeout(() => container.classList.add('active'), 50);
+
+            container.innerHTML = `
+                <div class="background" style="background-image: url('${images[index]}');"></div>
+                <div class="button-container">
+                    <button onclick="${isLastImage ? 'showHearts()' : 'nextImage()'}">
+                        ${isLastImage ? 'Finish' : 'Click'}
+                    </button>
+                </div>
+            `;
+
+            app.innerHTML = '';
+            app.appendChild(container);
+        }
+
+        function nextImage() {
+            currentIndex++;
+            if (currentIndex < images.length) {
+                loadImage(currentIndex);
+            }
+        }
+
+        function showHearts() {
+            for (let i = 0; i < 20; i++) {
+                createHeart();
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.bottom = '0';
+            heart.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 2000);
+        }
+
+        window.onload = () => loadImage(0);
+    </script>
+</body>
+</html>
